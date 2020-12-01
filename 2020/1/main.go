@@ -1,0 +1,73 @@
+package main
+
+import (
+	"go/build"
+	"io/ioutil"
+	"path/filepath"
+	"strconv"
+	"strings"
+)
+
+func firstproblem(input string) int {
+	values := make([]int, 0)
+	lines := strings.Split(input, "\n")
+
+	for _, line := range lines {
+		if line != "" {
+			value, err := strconv.Atoi(line)
+			if err != nil {
+				panic(err)
+			}
+			values = append(values, value)
+		}
+	}
+
+	for _, v := range values {
+		for _, v2 := range values {
+			if v+v2 == 2020 {
+				return v * v2
+			}
+		}
+	}
+
+	return -1
+}
+
+func secondproblem(input string) int {
+	values := make([]int, 0)
+	lines := strings.Split(input, "\n")
+
+	for _, line := range lines {
+		if line != "" {
+			value, err := strconv.Atoi(line)
+			if err != nil {
+				panic(err)
+			}
+			values = append(values, value)
+		}
+	}
+
+	for _, v := range values {
+		for _, v2 := range values {
+			for _, v3 := range values {
+				if v+v2+v3 == 2020 {
+					return v * v2 * v3
+				}
+			}
+		}
+	}
+	return -1
+}
+
+func main() {
+	path := filepath.Join(build.Default.GOPATH, "src", "github.com", "PFadel", "adventofcode", "2020", "1", "input")
+
+	b, err := ioutil.ReadFile(path)
+	if err != nil {
+		panic(err)
+	}
+	payload := string(b)
+
+	println(firstproblem(payload))
+	println(secondproblem(payload))
+}
