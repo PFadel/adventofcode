@@ -2,7 +2,7 @@ import os
 
 def firstproblem(payload):
     valid = 0
-    lines = {x for x in payload.split('\n') if x}
+    lines = [x for x in payload.split('\n') if x]
 
     for line in lines:
         info = line.split(' ')
@@ -23,7 +23,7 @@ def firstproblem(payload):
 
 def secondproblem(payload):
     valid = 0
-    lines = {x for x in payload.split('\n') if x}
+    lines = [x for x in payload.split('\n') if x]
 
     for line in lines:
         info = line.split(' ')
