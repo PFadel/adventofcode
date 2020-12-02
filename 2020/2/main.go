@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func firstproblem(input string) int {
@@ -19,20 +20,13 @@ func firstproblem(input string) int {
 			info := strings.Split(line, " ")
 			numbers := strings.Split(info[0], "-")
 
-			min, err := strconv.Atoi(numbers[0])
-			if err != nil {
-				panic(err)
-			}
-			max, err := strconv.Atoi(numbers[1])
-			if err != nil {
-				panic(err)
-			}
+			min, _ := strconv.Atoi(numbers[0])
+			max, _ := strconv.Atoi(numbers[1])
 
 			letter := info[1][:len(":")]
 
 			for _, char := range info[2] {
-				s := fmt.Sprintf("%c", char)
-				if s == letter {
+				if fmt.Sprintf("%c", char) == letter {
 					count++
 				}
 			}
@@ -54,14 +48,8 @@ func secondproblem(input string) int {
 			info := strings.Split(line, " ")
 			numbers := strings.Split(info[0], "-")
 
-			first, err := strconv.Atoi(numbers[0])
-			if err != nil {
-				panic(err)
-			}
-			second, err := strconv.Atoi(numbers[1])
-			if err != nil {
-				panic(err)
-			}
+			first, _ := strconv.Atoi(numbers[0])
+			second, _ := strconv.Atoi(numbers[1])
 
 			letter := info[1][:len(":")]
 
@@ -83,6 +71,14 @@ func main() {
 	}
 	payload := string(b)
 
-	println(firstproblem(payload))
-	println(secondproblem(payload))
+	start := time.Now()
+	r1 := firstproblem(payload)
+	elapsed1 := time.Since(start)
+
+	start = time.Now()
+	r2 := secondproblem(payload)
+	elapsed2 := time.Since(start)
+
+	fmt.Printf("%d, %d Nanoseconds\n", r1, elapsed1.Nanoseconds())
+	fmt.Printf("%d, %d Nanoseconds\n", r2, elapsed2.Nanoseconds())
 }

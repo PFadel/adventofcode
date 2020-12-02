@@ -1,11 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"go/build"
 	"io/ioutil"
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func firstproblem(input string) int {
@@ -14,10 +16,8 @@ func firstproblem(input string) int {
 
 	for _, line := range lines {
 		if line != "" {
-			value, err := strconv.Atoi(line)
-			if err != nil {
-				panic(err)
-			}
+			value, _ := strconv.Atoi(line)
+
 			values = append(values, value)
 		}
 	}
@@ -39,10 +39,8 @@ func secondproblem(input string) int {
 
 	for _, line := range lines {
 		if line != "" {
-			value, err := strconv.Atoi(line)
-			if err != nil {
-				panic(err)
-			}
+			value, _ := strconv.Atoi(line)
+
 			values = append(values, value)
 		}
 	}
@@ -68,6 +66,14 @@ func main() {
 	}
 	payload := string(b)
 
-	println(firstproblem(payload))
-	println(secondproblem(payload))
+	start := time.Now()
+	r1 := firstproblem(payload)
+	elapsed1 := time.Since(start)
+
+	start = time.Now()
+	r2 := secondproblem(payload)
+	elapsed2 := time.Since(start)
+
+	fmt.Printf("%d, %d Nanoseconds\n", r1, elapsed1.Nanoseconds())
+	fmt.Printf("%d, %d Nanoseconds\n", r2, elapsed2.Nanoseconds())
 }

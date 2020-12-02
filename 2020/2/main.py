@@ -1,4 +1,5 @@
 import os
+import time
 
 def firstproblem(payload):
     valid = 0
@@ -45,5 +46,13 @@ if __name__ == "__main__":
     with open(os.path.join(dir_path, 'input'), 'r') as entry:
         payload = entry.read()
 
-    print(firstproblem(payload))
-    print(secondproblem(payload))
+    start = time.time()
+    r1 = firstproblem(payload)
+    runtime_1 = time.time() - start
+
+    start = time.time()
+    r2 = secondproblem(payload)
+    runtime_2 = time.time() - start
+
+    print(f'Result: {r1} , Runtime: {runtime_1} seconds')
+    print(f'Result: {r2} , Runtime: {runtime_2} seconds')
