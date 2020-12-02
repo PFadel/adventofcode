@@ -37,5 +37,5 @@ if __name__ == "__main__":
     r2 = secondproblem(payload)
     runtime_2 = time.time() - start
 
-    print(f'Result: {r1} , Runtime: {runtime_1} seconds')
-    print(f'Result: {r2} , Runtime: {runtime_2} seconds')
+    print(f'Result: {r1} , Runtime: {runtime_1*pow(10,9)} nanoseconds')
+    print(f'Result: {r2} , Runtime: {runtime_2*pow(10,9)} nanoseconds')
