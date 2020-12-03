@@ -74,6 +74,6 @@ func main() {
 	r2 := secondproblem(payload)
 	elapsed2 := time.Since(start)
 
-	fmt.Printf("%d, %d Nanoseconds\n", r1, elapsed1.Nanoseconds())
-	fmt.Printf("%d, %d Nanoseconds\n", r2, elapsed2.Nanoseconds())
+	fmt.Printf("%d, %f Seconds\n", r1, elapsed1.Seconds())
+	fmt.Printf("%d, %f Seconds\n", r2, elapsed2.Seconds())
 }
