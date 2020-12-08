@@ -19,16 +19,6 @@ func in(l []int, v int) bool {
 	return false
 }
 
-func remove(l []int, v int) []int {
-	for i, x := range l {
-		if x == v {
-			return append(l[:i], l[i+1:]...)
-		}
-	}
-
-	return l
-}
-
 func firstproblem(input string) int {
 	lines := strings.Split(input, "\n")
 	lines = lines[:len(lines)-1]
@@ -65,40 +55,24 @@ func firstproblem(input string) int {
 	}
 }
 
-func secondproblem(input string) int {
-	lines := strings.Split(input, "\n")
-	lines = lines[:len(lines)-1]
-
+func executeProgram(lines []string) (int, bool) {
 	acc := 0
-	executed := make([]int, 0)
-
+	executed := make(map[int]int)
 	i := 0
-	// oldI := 0
-	changedCmd := ""
-	changedI := 0
-	tried := make([]int, 0)
+
 	for {
 		if i >= len(lines) {
-			break
+			return acc, true
 		}
 
-		if in(executed, i) {
-			if changedCmd != "" {
-				lines[changedI] = changedCmd
-			}
+		if val, ok := executed[i]; ok && val > 1 {
+			return -1, false
+		}
 
-			if !in(tried, i) {
-				changedCmd = lines[i]
-				changedI = i
-				lines[i] = "nop +1"
-				tried = append(tried, i)
-			}
-
-			executed = make([]int, 0)
-			i = 0
-			acc = 0
+		if _, ok := executed[i]; ok {
+			executed[i]++
 		} else {
-			executed = append(executed, i)
+			executed[i] = 1
 		}
 
 		l := lines[i]
@@ -111,22 +85,40 @@ func secondproblem(input string) int {
 				panic(err)
 			}
 			acc += sum
-			// oldI = i
 			i++
 		case "jmp":
 			sum, err := strconv.Atoi(cmd[1])
 			if err != nil {
 				panic(err)
 			}
-			// oldI = i
 			i += sum
 		case "nop":
-			// oldI = i
 			i++
 		}
 	}
+}
 
-	return acc
+func secondproblem(input string) int {
+	lines := strings.Split(input, "\n")
+	lines = lines[:len(lines)-1]
+
+	for i := range lines {
+		changed := false
+		if strings.HasPrefix(lines[i], "jmp") {
+			changed = true
+			lines[i] = strings.Replace(lines[i], "jmp", "nop", 1)
+		}
+
+		if acc, ok := executeProgram(lines); ok {
+			return acc
+		}
+
+		if strings.HasPrefix(lines[i], "nop") && changed {
+			lines[i] = strings.Replace(lines[i], "nop", "jmp", 1)
+		}
+	}
+
+	return -1
 }
 
 func main() {
@@ -138,14 +130,14 @@ func main() {
 	}
 	payload := string(b)
 
-	// start := time.Now()
-	// r1 := firstproblem(payload)
-	// elapsed1 := time.Since(start)
-
 	start := time.Now()
+	r1 := firstproblem(payload)
+	elapsed1 := time.Since(start)
+
+	start = time.Now()
 	r2 := secondproblem(payload)
 	elapsed2 := time.Since(start)
 
-	// fmt.Printf("%d, %f Seconds\n", r1, elapsed1.Seconds())
+	fmt.Printf("%d, %f Seconds\n", r1, elapsed1.Seconds())
 	fmt.Printf("%d, %f Seconds\n", r2, elapsed2.Seconds())
 }
