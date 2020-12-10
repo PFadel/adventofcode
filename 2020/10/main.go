@@ -91,7 +91,7 @@ func findAdapters(values valuesList, a *adapter) {
 	}
 }
 
-func ends(target int, a *adapter) int {
+func ends(target int, a *adapter, adaptersMap map[int]adapter) int {
 	if a.Jolt+3 == target {
 		return 1
 	}
@@ -101,17 +101,8 @@ func ends(target int, a *adapter) int {
 		if s+3 == 1 {
 			return 1
 		}
-		path := filepath.Join(build.Default.GOPATH, "src", "github.com", "PFadel", "adventofcode", fmt.Sprintf("%d", s))
-		b, err := ioutil.ReadFile(path)
-		if err != nil {
-			panic(err)
-		}
-		new := adapter{}
-		err = json.Unmarshal(b, &new)
-		if err != nil {
-			panic(err)
-		}
-		end += ends(target, &new)
+		new := adaptersMap[s]
+		end += ends(target, &new, adaptersMap)
 	}
 	return end
 }
@@ -137,7 +128,22 @@ func secondproblem(input string) int {
 
 	findAdapters(values, &start)
 
-	return ends(values[len(values)-1]+3, &start)
+	adaptersMap := make(map[int]adapter)
+	for _, v := range values {
+		path := filepath.Join(build.Default.GOPATH, "src", "github.com", "PFadel", "adventofcode", fmt.Sprintf("%d", v))
+		b, err := ioutil.ReadFile(path)
+		if err != nil {
+			panic(err)
+		}
+		new := adapter{}
+		err = json.Unmarshal(b, &new)
+		if err != nil {
+			panic(err)
+		}
+		adaptersMap[v] = new
+	}
+
+	return ends(values[len(values)-1]+3, &start, adaptersMap)
 }
 
 func main() {
