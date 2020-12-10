@@ -80,11 +80,15 @@ func findAdapters(values valuesList, a *adapter) {
 			}
 
 			findAdapters(values, &new)
-			output, err := json.Marshal(new)
-			if err != nil {
-				panic(err)
+
+			path := filepath.Join(build.Default.GOPATH, "src", "github.com", "PFadel", "adventofcode", fmt.Sprintf("%d", v))
+			if _, err := os.Stat(path); os.IsNotExist(err) {
+				output, err := json.Marshal(new)
+				if err != nil {
+					panic(err)
+				}
+				ioutil.WriteFile(strconv.Itoa(new.Jolt), output, os.ModePerm)
 			}
-			ioutil.WriteFile(strconv.Itoa(new.Jolt), output, os.ModePerm)
 
 			a.Possiblevolts = append(a.Possiblevolts, new.Jolt)
 		}
