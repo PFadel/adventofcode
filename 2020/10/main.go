@@ -72,14 +72,14 @@ type adapter struct {
 }
 
 func findAdapters(values valuesList, a *adapter) {
-	for _, v := range values {
+	for i, v := range values {
 		if v-a.Jolt == 1 || v-a.Jolt == 2 || v-a.Jolt == 3 {
 			new := adapter{
 				Jolt:          v,
 				Possiblevolts: []int{},
 			}
 
-			findAdapters(values, &new)
+			findAdapters(values[i:], &new)
 
 			path := filepath.Join(build.Default.GOPATH, "src", "github.com", "PFadel", "adventofcode", fmt.Sprintf("%d", v))
 			if _, err := os.Stat(path); os.IsNotExist(err) {
