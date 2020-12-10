@@ -91,6 +91,8 @@ func findAdapters(values valuesList, a *adapter) {
 			}
 
 			a.Possiblevolts = append(a.Possiblevolts, new.Jolt)
+		} else if v-a.Jolt >= 4 {
+			break
 		}
 	}
 }
