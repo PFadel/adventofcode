@@ -1,11 +1,11 @@
 package main
 
 import (
-	// "encoding/json"
+	"encoding/json"
 	"fmt"
 	"go/build"
 	"io/ioutil"
-	// "os"
+	"os"
 	"path/filepath"
 	"sort"
 	"strconv"
@@ -65,26 +65,28 @@ func firstproblem(input string) int {
 }
 
 type adapter struct {
-	Jolt             int       `json:"jolt"`
-	PossibleAdapters []adapter `json:"possibleAdapters"`
+	Jolt          int   `json:"jolt"`
+	Possiblevolts []int `json:"possiblevolts"`
+
+	files []int
 }
 
 func findAdapters(values valuesList, a *adapter) {
 	for _, v := range values {
 		if v-a.Jolt == 1 || v-a.Jolt == 2 || v-a.Jolt == 3 {
 			new := adapter{
-				Jolt:             v,
-				PossibleAdapters: []adapter{},
+				Jolt:          v,
+				Possiblevolts: []int{},
 			}
 
 			findAdapters(values, &new)
-			// output, err := json.Marshal(new)
-			// if err != nil {
-			// 	panic(err)
-			// }
-			// ioutil.WriteFile(strconv.Itoa(new.Jolt), output, os.ModePerm)
+			output, err := json.Marshal(new)
+			if err != nil {
+				panic(err)
+			}
+			ioutil.WriteFile(strconv.Itoa(new.Jolt), output, os.ModePerm)
 
-			a.PossibleAdapters = append(a.PossibleAdapters, new)
+			a.Possiblevolts = append(a.Possiblevolts, new.Jolt)
 		}
 	}
 }
@@ -95,11 +97,21 @@ func ends(target int, a *adapter) int {
 	}
 
 	end := 0
-	for _, s := range a.PossibleAdapters {
-		if s.Jolt+3 == 1 {
+	for _, s := range a.Possiblevolts {
+		if s+3 == 1 {
 			return 1
 		}
-		end += ends(target, &s)
+		path := filepath.Join(build.Default.GOPATH, "src", "github.com", "PFadel", "adventofcode", fmt.Sprintf("%d", s))
+		b, err := ioutil.ReadFile(path)
+		if err != nil {
+			panic(err)
+		}
+		new := adapter{}
+		err = json.Unmarshal(b, &new)
+		if err != nil {
+			panic(err)
+		}
+		end += ends(target, &new)
 	}
 	return end
 }
@@ -119,8 +131,8 @@ func secondproblem(input string) int {
 	sort.Sort(values)
 
 	start := adapter{
-		Jolt:             0,
-		PossibleAdapters: []adapter{},
+		Jolt:          0,
+		Possiblevolts: []int{},
 	}
 
 	findAdapters(values, &start)
