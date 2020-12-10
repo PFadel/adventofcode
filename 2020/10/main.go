@@ -1,11 +1,9 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"go/build"
 	"io/ioutil"
-	"os"
 	"path/filepath"
 	"sort"
 	"strconv"
@@ -67,32 +65,42 @@ func firstproblem(input string) int {
 type adapter struct {
 	Jolt          int   `json:"jolt"`
 	Possiblevolts []int `json:"possiblevolts"`
-
-	files []int
 }
 
-func findAdapters(values valuesList, a *adapter) {
+func findAdapters(values valuesList, a *adapter, adaptersMap map[int]adapter) {
 	for i, v := range values {
-		if v-a.Jolt == 1 || v-a.Jolt == 2 || v-a.Jolt == 3 {
-			new := adapter{
-				Jolt:          v,
-				Possiblevolts: []int{},
-			}
-
-			findAdapters(values[i:], &new)
-
-			path := filepath.Join(build.Default.GOPATH, "src", "github.com", "PFadel", "adventofcode", fmt.Sprintf("%d", v))
-			if _, err := os.Stat(path); os.IsNotExist(err) {
-				output, err := json.Marshal(new)
-				if err != nil {
-					panic(err)
+		if _, ok := adaptersMap[v]; ok {
+			continue
+		} else {
+			if v-a.Jolt == 1 || v-a.Jolt == 2 || v-a.Jolt == 3 {
+				new := adapter{
+					Jolt:          v,
+					Possiblevolts: []int{},
 				}
-				ioutil.WriteFile(strconv.Itoa(new.Jolt), output, os.ModePerm)
-			}
 
-			a.Possiblevolts = append(a.Possiblevolts, new.Jolt)
-		} else if v-a.Jolt >= 4 {
-			break
+				findAdapters(values[i:], &new, adaptersMap)
+
+				a.Possiblevolts = append(a.Possiblevolts, new.Jolt)
+				if i+1 < len(values) && (values[i+1]-a.Jolt == 1 || values[i+1]-a.Jolt == 2 || values[i+1]-a.Jolt == 3) {
+					new := adapter{
+						Jolt:          values[i+1],
+						Possiblevolts: []int{},
+					}
+
+					findAdapters(values[i+1:], &new, adaptersMap)
+					a.Possiblevolts = append(a.Possiblevolts, new.Jolt)
+				}
+				if i+2 < len(values) && (values[i+2]-a.Jolt == 1 || values[i+2]-a.Jolt == 2 || values[i+2]-a.Jolt == 3) {
+					new := adapter{
+						Jolt:          values[i+2],
+						Possiblevolts: []int{},
+					}
+
+					findAdapters(values[i+2:], &new, adaptersMap)
+					a.Possiblevolts = append(a.Possiblevolts, new.Jolt)
+				}
+			}
+			adaptersMap[a.Jolt] = *a
 		}
 	}
 }
@@ -132,22 +140,8 @@ func secondproblem(input string) int {
 		Possiblevolts: []int{},
 	}
 
-	findAdapters(values, &start)
-
 	adaptersMap := make(map[int]adapter)
-	for _, v := range values {
-		path := filepath.Join(build.Default.GOPATH, "src", "github.com", "PFadel", "adventofcode", fmt.Sprintf("%d", v))
-		b, err := ioutil.ReadFile(path)
-		if err != nil {
-			panic(err)
-		}
-		new := adapter{}
-		err = json.Unmarshal(b, &new)
-		if err != nil {
-			panic(err)
-		}
-		adaptersMap[v] = new
-	}
+	findAdapters(values, &start, adaptersMap)
 
 	return ends(values[len(values)-1]+3, &start, adaptersMap)
 }
