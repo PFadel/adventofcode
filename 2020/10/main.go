@@ -67,7 +67,9 @@ type adapter struct {
 	Possiblevolts []int `json:"possiblevolts"`
 }
 
-func findAdapters(values valuesList, a *adapter, adaptersMap map[int]adapter) {
+var adaptersMap map[int]adapter
+
+func findAdapters(values valuesList, a *adapter) {
 	for i, v := range values {
 		if _, ok := adaptersMap[v]; ok {
 			continue
@@ -78,7 +80,7 @@ func findAdapters(values valuesList, a *adapter, adaptersMap map[int]adapter) {
 					Possiblevolts: []int{},
 				}
 
-				findAdapters(values[i:], &new, adaptersMap)
+				findAdapters(values[i:], &new)
 
 				a.Possiblevolts = append(a.Possiblevolts, new.Jolt)
 				if i+1 < len(values) && (values[i+1]-a.Jolt == 1 || values[i+1]-a.Jolt == 2 || values[i+1]-a.Jolt == 3) {
@@ -87,7 +89,7 @@ func findAdapters(values valuesList, a *adapter, adaptersMap map[int]adapter) {
 						Possiblevolts: []int{},
 					}
 
-					findAdapters(values[i+1:], &new, adaptersMap)
+					findAdapters(values[i+1:], &new)
 					a.Possiblevolts = append(a.Possiblevolts, new.Jolt)
 				}
 				if i+2 < len(values) && (values[i+2]-a.Jolt == 1 || values[i+2]-a.Jolt == 2 || values[i+2]-a.Jolt == 3) {
@@ -96,7 +98,7 @@ func findAdapters(values valuesList, a *adapter, adaptersMap map[int]adapter) {
 						Possiblevolts: []int{},
 					}
 
-					findAdapters(values[i+2:], &new, adaptersMap)
+					findAdapters(values[i+2:], &new)
 					a.Possiblevolts = append(a.Possiblevolts, new.Jolt)
 				}
 			}
@@ -105,7 +107,7 @@ func findAdapters(values valuesList, a *adapter, adaptersMap map[int]adapter) {
 	}
 }
 
-func ends(target int, a *adapter, adaptersMap map[int]adapter) int {
+func ends(target int, a *adapter) int {
 	if a.Jolt+3 == target {
 		return 1
 	}
@@ -116,7 +118,7 @@ func ends(target int, a *adapter, adaptersMap map[int]adapter) int {
 			return 1
 		}
 		new := adaptersMap[s]
-		end += ends(target, &new, adaptersMap)
+		end += ends(target, &new)
 	}
 	return end
 }
@@ -140,10 +142,10 @@ func secondproblem(input string) int {
 		Possiblevolts: []int{},
 	}
 
-	adaptersMap := make(map[int]adapter)
-	findAdapters(values, &start, adaptersMap)
+	adaptersMap = make(map[int]adapter)
+	findAdapters(values, &start)
 
-	return ends(values[len(values)-1]+3, &start, adaptersMap)
+	return ends(values[len(values)-1]+3, &start)
 }
 
 func main() {
