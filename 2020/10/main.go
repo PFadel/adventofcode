@@ -1,11 +1,11 @@
 package main
 
 import (
-	"encoding/json"
+	// "encoding/json"
 	"fmt"
 	"go/build"
 	"io/ioutil"
-	"os"
+	// "os"
 	"path/filepath"
 	"sort"
 	"strconv"
@@ -78,11 +78,11 @@ func findAdapters(values valuesList, a *adapter) {
 			}
 
 			findAdapters(values, &new)
-			output, err := json.Marshal(new)
-			if err != nil {
-				panic(err)
-			}
-			ioutil.WriteFile(strconv.Itoa(new.Jolt), output, os.ModePerm)
+			// output, err := json.Marshal(new)
+			// if err != nil {
+			// 	panic(err)
+			// }
+			// ioutil.WriteFile(strconv.Itoa(new.Jolt), output, os.ModePerm)
 
 			a.PossibleAdapters = append(a.PossibleAdapters, new)
 		}
@@ -93,8 +93,6 @@ func ends(target int, a *adapter) int {
 	if a.Jolt+3 == target {
 		return 1
 	}
-
-	println(a.Jolt)
 
 	end := 0
 	for _, s := range a.PossibleAdapters {
@@ -131,8 +129,8 @@ func secondproblem(input string) int {
 }
 
 func main() {
-	path := filepath.Join(build.Default.GOPATH, "src", "github.com", "PFadel", "adventofcode", "2020", "10", "input")
-	// path := filepath.Join(build.Default.GOPATH, "src", "github.com", "PFadel", "adventofcode", "2020", "10", "test")
+	// path := filepath.Join(build.Default.GOPATH, "src", "github.com", "PFadel", "adventofcode", "2020", "10", "input")
+	path := filepath.Join(build.Default.GOPATH, "src", "github.com", "PFadel", "adventofcode", "2020", "10", "test")
 
 	b, err := ioutil.ReadFile(path)
 	if err != nil {
